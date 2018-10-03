@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
-
+import pickle
 # Training settings
 batch_size = 64
 
@@ -69,23 +69,12 @@ def train(epoch):
                 100. * batch_idx / len(train_loader), loss.data[0]))
 
 
-def test():
-    model.eval()
-    test_loss = 0
-    correct = 0
-    for data, target in test_loader:
-        data, target = Variable(data, volatile=True), Variable(target)
-        output = model(data)
-        test_loss += criterion(output, target).data[0]
-        pred = output.data.max(1, keepdim=True)[1]
-        correct += pred.eq(target.data.view_as(pred)).cpu().sum()
-
-    test_loss /= len(test_loader.dataset)
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
-
-
 for epoch in range(1, 10):
     train(epoch)
-    test()
+
+list_pickle_path = 'list_pickle.pkl'
+ 
+# Create an variable to pickle and open it in write mode
+list_pickle = open(list_pickle_path, 'wb')
+pickle.dump(model, list_pickle)
+list_pickle.close()
